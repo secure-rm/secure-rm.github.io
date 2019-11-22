@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>events.js - Docdash</title>
+    
+    <meta name="description" content="A clean, responsive documentation template theme for JSDoc 3." />
+    
+        <meta name="keywords" content="jsdoc, docdash" />
+        <meta name="keyword" content="jsdoc, docdash" />
+    
+    
+    
+    <meta property="og:title" content="Docdash"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="https://cloud.githubusercontent.com/assets/447956/13398144/4dde7f36-defd-11e5-8909-1a9013302cb9.png"/>
+    <meta property="og:site_name" content="Docdash"/>
+    <meta property="og:url" content="http://clenemt.github.io/docdash/"/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/clenemt/docdash" target="_blank" class="menu-item" id="repository" >Github repo</a></h2><h3>Classes</h3><ul><li><a href="RmDir.html">RmDir</a><ul class='methods'><li data-type='method' style='display: none;'><a href="RmDir.html#log">log</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#rmdir">rmdir</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#then">then</a></li></ul></li><li><a href="Standard.html">Standard</a></li><li><a href="Unlink.html">Unlink</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Unlink.html#byte">byte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#byteArray">byteArray</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#complementary">complementary</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#forByte">forByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#log">log</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#ones">ones</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#random">random</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#randomByte">randomByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#then">then</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#truncate">truncate</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#unlink">unlink</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeroes">zeroes</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeros">zeros</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="eventEmitter.html#event:debug">eventEmitter#debug</a></li></ul><h3>Global</h3><ul><li><a href="global.html#standards">standards</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">events.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const events_1 = tslib_1.__importDefault(require("events"));
+exports.eventEmitter = new events_1.default.EventEmitter();
+// Emit event with better message error
+function eventError(err, file) {
+    if (err) {
+        switch (err.code) {
+            case 'EMFILE':
+                exports.eventEmitter.emit('notice', file, `Too many open files, cannot ${err.syscall || 'access'}: `);
+                break;
+            case 'ENOENT':
+                exports.eventEmitter.emit('notice', file, 'This file no longer exists: ');
+                break;
+            case 'EPERM':
+                exports.eventEmitter.emit('warn', file, `Operation not permitted on this file (${err.syscall}): `);
+                break;
+            case 'ENOTEMPTY':
+                // Work as intended
+                break;
+            default:
+                if (err.message === '64bit files are not yet supported.') {
+                    exports.eventEmitter.emit('warn', file, '64bit files are not yet supported.');
+                }
+                else {
+                    exports.eventEmitter.emit('error', file, err);
+                    // throw err
+                }
+            // break
+        }
+    }
+}
+exports.eventError = eventError;
+exports.tree = {};
+const debug = process.argv.includes('--debug');
+if (debug) {
+    exports.eventEmitter.on('debug', (file, message) => console.log('\x1b[38;2;128;0;128m Debug \x1b[39m' + message + file));
+    exports.eventEmitter.on('info', (file, message) => console.log('\x1b[38;2;0;0;255m Info \x1b[39m' + message + file));
+    exports.eventEmitter.on('notice', (file, message) => console.log('\x1b[38;2;0;255;255m Notice \x1b[39m' + message + file));
+    exports.eventEmitter.on('warn', (file, message) => console.log('\x1b[38;2;255;255;0m Warn \x1b[39m' + message + file));
+    exports.eventEmitter.on('error', (file, message) => console.log('\x1b[38;2;255;0;0m Error \x1b[39m' + message + file));
+}
+/**
+ * Debug event.
+ *
+ * @event eventEmitter#debug
+ * @type {string} message - Debug message.
+ */
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

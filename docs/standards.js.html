@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>standards.js - Docdash</title>
+    
+    <meta name="description" content="A clean, responsive documentation template theme for JSDoc 3." />
+    
+        <meta name="keywords" content="jsdoc, docdash" />
+        <meta name="keyword" content="jsdoc, docdash" />
+    
+    
+    
+    <meta property="og:title" content="Docdash"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="https://cloud.githubusercontent.com/assets/447956/13398144/4dde7f36-defd-11e5-8909-1a9013302cb9.png"/>
+    <meta property="og:site_name" content="Docdash"/>
+    <meta property="og:url" content="http://clenemt.github.io/docdash/"/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/clenemt/docdash" target="_blank" class="menu-item" id="repository" >Github repo</a></h2><h3>Classes</h3><ul><li><a href="RmDir.html">RmDir</a><ul class='methods'><li data-type='method' style='display: none;'><a href="RmDir.html#log">log</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#rmdir">rmdir</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#then">then</a></li></ul></li><li><a href="Standard.html">Standard</a></li><li><a href="Unlink.html">Unlink</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Unlink.html#byte">byte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#byteArray">byteArray</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#complementary">complementary</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#forByte">forByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#log">log</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#ones">ones</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#random">random</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#randomByte">randomByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#then">then</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#truncate">truncate</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#unlink">unlink</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeroes">zeroes</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeros">zeros</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="eventEmitter.html#event:debug">eventEmitter#debug</a></li></ul><h3>Global</h3><ul><li><a href="global.html#standards">standards</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">standards.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const fs_1 = tslib_1.__importDefault(require("fs"));
+const unlink_1 = tslib_1.__importDefault(require("./unlink"));
+const rmdir_1 = tslib_1.__importDefault(require("./rmdir"));
+/**
+ * The main class to create standards.
+ * You have the possibility to create your own standard by chaining differents methods.
+ * You can even add your own function with `then`.
+ * @param {Object} standard - A destructuring parameter.
+  * @param {string} standard.name - The standard name.
+  * @param {number} standard.passes - The number of times a file is written.
+  * @param {string} standard.description - The standard description.
+  * @param {string} standard.unlinkStandard - The unlink standard attached.
+  * @param {string} standard.rmdirStandard - The rmdir standard attached.
+ * @example
+ * const options = {
+    customStandard: new srm.Standard({
+      unlinkStandard: new srm.Unlink()
+        .log()
+        .random()
+        .then(function (file, fileSize) {
+          return new Promise((resolve, reject) => {
+            if (file === 'test.js')
+              reject(new Error())
+            else
+              resolve({ file, fileSize })
+          })
+        })
+        .ones()
+        .unlink()
+      rmdirStandard: new srm.rmdirStandard()
+        .log()
+        .rmDir()
+    })
+  }
+
+  srm('./*', options (err, fileTree) => {
+    if (err) throw err
+    console.log(`Successfully removed ${fileTree} !`)
+  })
+ * @description
+ * Another possibility is to add your standard to the `srm.standards` object to retrieve it at any time and add additional properties:
+ * @example
+ * srm.standards.myStandardName = new Standard({
+    name: 'My Standard Name',
+    passes: 3,
+    description: 'My standard description!',
+    unlinkStandard: new Unlink()
+      .log()
+      .random()
+      .rename()
+      .ones()
+      .unlink(),
+    rmdirStandard: new RmDir()
+      .log()
+      .rmDir()
+  })
+ * @class
+ */
+class Standard {
+    constructor({ name, passes, description, unlinkStandard, rmdirStandard }) {
+        this.name = name || 'Standard #';
+        this.passes = passes || 1;
+        this.description = description || 'no description';
+        this.unlinkStandard = unlinkStandard || function (uuid) { return fs_1.default.unlink; };
+        this.rmdirStandard = rmdirStandard || function (uuid) { return fs_1.default.rmdir; };
+    }
+}
+exports.Standard = Standard;
+/**
+ * Object listing every standards.
+ * Secure-rm has many standards to safely delete your files.
+ * Find the one that meets your needs.
+ */
+exports.standards = {
+    preview: new Standard({
+        name: 'Preview',
+        passes: 1,
+        description: 'Returns targeted files without deleting them.',
+        unlinkStandard: new unlink_1.default()
+            .log()
+            .compile,
+        rmdirStandard: new rmdir_1.default()
+            .log()
+            .compile
+    }),
+    randomData: new Standard({
+        name: 'Pseudorandom data',
+        passes: 1,
+        description: `Also kwown as "Australian Information Security Manual Standard ISM 6.2.92"
+and "New Zealand Information and Communications Technology Standard NZSIT 402".
+Your data is overwritten with cryptographically strong pseudo-random data. (The data is indistinguishable from random noise.)`,
+        unlinkStandard: new unlink_1.default()
+            .random()
+            .unlink()
+    }),
+    randomByte: new Standard({
+        name: 'Pseudorandom byte',
+        passes: 1,
+        description: 'Overwriting with a random byte.',
+        unlinkStandard: new unlink_1.default()
+            .randomByte()
+            .unlink()
+    }),
+    zeros: new Standard({
+        name: 'Zeros',
+        passes: 1,
+        description: 'Overwriting with zeros.',
+        unlinkStandard: new unlink_1.default()
+            .zeros()
+            .unlink()
+    }),
+    /**
+     * @deprecated
+     */
+    zeroes: new Standard({
+        name: 'Zeros',
+        passes: 1,
+        description: 'Overwriting with zeros. (Deprecated)',
+        unlinkStandard: new unlink_1.default()
+            .zeros()
+            .unlink()
+    }),
+    ones: new Standard({
+        name: 'Ones',
+        passes: 1,
+        description: 'Overwriting with ones.',
+        unlinkStandard: new unlink_1.default()
+            .ones()
+            .unlink()
+    }),
+    secure: new Standard({
+        name: '**Secure-rm standard**',
+        passes: 3,
+        description: `Pass 1: Overwriting with random data;
+Pass 2: Renaming the file with random data;
+Pass 3: Truncating between 25% and 75% of the file.`,
+        unlinkStandard: new unlink_1.default()
+            .random()
+            .rename()
+            .truncate()
+            .unlink(),
+        rmdirStandard: new rmdir_1.default()
+            .rename()
+            .rmdir()
+    }),
+    'GOST_R50739-95': new Standard({
+        name: 'Russian State Standard GOST R50739-95',
+        passes: 2,
+        description: `Pass 1: Overwriting with zeroes;
+Pass 2: Overwriting with random data.`,
+        unlinkStandard: new unlink_1.default()
+            .zeroes()
+            .random()
+            .unlink()
+    }),
+    HMG_IS5: new Standard({
+        name: 'British HMG Infosec Standard 5',
+        passes: 3,
+        description: `Also known as "Air Force System Security Instructions AFSSI-5020",
+"Standard of the American Department of Defense (DoD 5220.22 M)"
+"National Computer Security Center NCSC-TG-025 Standard"
+and "Navy Staff Office Publication NAVSO P-5239-26"
+Pass 1: Overwriting with zeroes;
+Pass 2: Overwriting with ones;
+Pass 3: Overwriting with random data as well as verifying the writing of this data.`,
+        unlinkStandard: new unlink_1.default()
+            .zeroes()
+            .ones()
+            .random()
+            .unlink()
+    }),
+    'AR380-19': new Standard({
+        name: 'US Army AR380-19',
+        passes: 3,
+        description: `Pass 1: Overwriting with random data;
+Pass 2: Overwriting with a random byte;
+Pass 3: Overwriting with the complement of the 2nd pass, and verifying the writing.`,
+        unlinkStandard: new unlink_1.default()
+            .random()
+            .randomByte()
+            .complementary()
+            .unlink()
+    }),
+    VSITR: new Standard({
+        name: 'Standard of the Federal Office for Information Security (BSI-VSITR)',
+        passes: 7,
+        description: `Also known as "Royal Canadian Mounted Police TSSIT OPS-II"
+Pass 1: Overwriting with zeroes;
+Pass 2: Overwriting with ones;
+Pass 3-6: Same as 1-2;
+Pass 7: Overwriting with a random data as well as review the writing of this character.`,
+        unlinkStandard: new unlink_1.default()
+            .zeroes()
+            .ones()
+            .zeroes()
+            .ones()
+            .zeroes()
+            .ones()
+            .random()
+            .unlink()
+    }),
+    schneier: new Standard({
+        name: 'Bruce Schneier Algorithm',
+        passes: 7,
+        description: `Pass 1: Overwriting with zeros;
+Pass 2: Overwriting with ones;
+Pass 3-7: Overwriting with random data.`,
+        unlinkStandard: new unlink_1.default()
+            .zeroes()
+            .ones()
+            .random(5)
+            .unlink()
+    }),
+    pfitzner: new Standard({
+        name: 'Pfitzner Method',
+        passes: 33,
+        description: 'Pass 1-33: Overwriting with random data.',
+        unlinkStandard: new unlink_1.default()
+            .random(33)
+            .unlink()
+    }),
+    gutmann: new Standard({
+        name: 'Peter Gutmann Algorithm',
+        passes: 35,
+        description: `Pass 1-4: Overwriting with random data;
+Pass 5: Overwriting with 0x55;
+Pass 6: Overwriting with 0xAA;
+Pass 7-9: Overwriting with 0x92 0x49 0x24, then cycling through the bytes;
+Pass 10-25: Overwriting with 0x00, incremented by 1 at each pass, until 0xFF;
+Pass 26-28: Same as 7-9;
+Pass 29-31: Overwriting with 0x6D 0xB6 0xDB, then cycling through the bytes;
+Pass 32-35: Overwriting with random data.`,
+        unlinkStandard: new unlink_1.default()
+            .random(4)
+            .byte(0x55)
+            .byte(0xAA)
+            .byteArray([0x92, 0x49, 0x24])
+            .byteArray([0x49, 0x24, 0x92])
+            .byteArray([0x24, 0x92, 0x49])
+            .forByte({ init: 0x00, condition: i => i &lt; 0xFF, increment: i => i + 0x11 })
+            .byteArray([0x92, 0x49, 0x24])
+            .byteArray([0x49, 0x24, 0x92])
+            .byteArray([0x24, 0x92, 0x49])
+            .byteArray([0x6D, 0xB6, 0xDB])
+            .byteArray([0xB6, 0xDB, 0x6D])
+            .byteArray([0xDB, 0x6D, 0xB6])
+            .random(4)
+            .unlink()
+    })
+};
+// List of valid standards IDs
+exports.validIDs = Object.keys(exports.standards);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

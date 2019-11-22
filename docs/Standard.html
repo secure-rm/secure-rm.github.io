@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Standard - Docdash</title>
+    
+    <meta name="description" content="A clean, responsive documentation template theme for JSDoc 3." />
+    
+        <meta name="keywords" content="jsdoc, docdash" />
+        <meta name="keyword" content="jsdoc, docdash" />
+    
+    
+    
+    <meta property="og:title" content="Docdash"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="https://cloud.githubusercontent.com/assets/447956/13398144/4dde7f36-defd-11e5-8909-1a9013302cb9.png"/>
+    <meta property="og:site_name" content="Docdash"/>
+    <meta property="og:url" content="http://clenemt.github.io/docdash/"/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/clenemt/docdash" target="_blank" class="menu-item" id="repository" >Github repo</a></h2><h3>Classes</h3><ul><li><a href="RmDir.html">RmDir</a><ul class='methods'><li data-type='method' style='display: none;'><a href="RmDir.html#log">log</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#rmdir">rmdir</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#then">then</a></li></ul></li><li><a href="Standard.html">Standard</a></li><li><a href="Unlink.html">Unlink</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Unlink.html#byte">byte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#byteArray">byteArray</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#complementary">complementary</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#forByte">forByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#log">log</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#ones">ones</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#random">random</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#randomByte">randomByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#then">then</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#truncate">truncate</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#unlink">unlink</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeroes">zeroes</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeros">zeros</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="eventEmitter.html#event:debug">eventEmitter#debug</a></li></ul><h3>Global</h3><ul><li><a href="global.html#standards">standards</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Standard</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Standard
+        </h2>
+        
+            <div class="class-description"><p>The main class to create standards.<br>
+You have the possibility to create your own standard by chaining differents methods.<br>
+You can even add your own function with <code>then</code>.</p></div>
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="Standard"><span class="type-signature"></span>new Standard<span class="signature">(standard)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="standards.js.html">standards.js</a>, <a href="standards.js.html#line63">line 63</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Another possibility is to add your standard to the <code>srm.standards</code> object to retrieve it at any time and add additional properties:</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>const options = {
+    customStandard: new srm.Standard({
+      unlinkStandard: new srm.Unlink()
+        .log()
+        .random()
+        .then(function (file, fileSize) {
+          return new Promise((resolve, reject) => {
+            if (file === 'test.js')
+              reject(new Error())
+            else
+              resolve({ file, fileSize })
+          })
+        })
+        .ones()
+        .unlink()
+      rmdirStandard: new srm.rmdirStandard()
+        .log()
+        .rmDir()
+    })
+  }
+
+  srm('./*', options (err, fileTree) => {
+    if (err) throw err
+    console.log(`Successfully removed ${fileTree} !`)
+  })</code></pre>
+
+    <pre class="prettyprint"><code>srm.standards.myStandardName = new Standard({
+    name: 'My Standard Name',
+    passes: 3,
+    description: 'My standard description!',
+    unlinkStandard: new Unlink()
+      .log()
+      .random()
+      .rename()
+      .ones()
+      .unlink(),
+    rmdirStandard: new RmDir()
+      .log()
+      .rmDir()
+  })</code></pre>
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>standard</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A destructuring parameter.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The standard name.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>passes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The number of times a file is written.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>description</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The standard description.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>unlinkStandard</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The unlink standard attached.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rmdirStandard</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The rmdir standard attached.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        </div>
+    
+
+    
+
+    
+
+    
+    
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

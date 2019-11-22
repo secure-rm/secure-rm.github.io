@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>rmdir.js - Docdash</title>
+    
+    <meta name="description" content="A clean, responsive documentation template theme for JSDoc 3." />
+    
+        <meta name="keywords" content="jsdoc, docdash" />
+        <meta name="keyword" content="jsdoc, docdash" />
+    
+    
+    
+    <meta property="og:title" content="Docdash"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="https://cloud.githubusercontent.com/assets/447956/13398144/4dde7f36-defd-11e5-8909-1a9013302cb9.png"/>
+    <meta property="og:site_name" content="Docdash"/>
+    <meta property="og:url" content="http://clenemt.github.io/docdash/"/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/clenemt/docdash" target="_blank" class="menu-item" id="repository" >Github repo</a></h2><h3>Classes</h3><ul><li><a href="RmDir.html">RmDir</a><ul class='methods'><li data-type='method' style='display: none;'><a href="RmDir.html#log">log</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#rmdir">rmdir</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#then">then</a></li></ul></li><li><a href="Standard.html">Standard</a></li><li><a href="Unlink.html">Unlink</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Unlink.html#byte">byte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#byteArray">byteArray</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#complementary">complementary</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#forByte">forByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#log">log</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#ones">ones</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#random">random</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#randomByte">randomByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#then">then</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#truncate">truncate</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#unlink">unlink</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeroes">zeroes</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeros">zeros</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="eventEmitter.html#event:debug">eventEmitter#debug</a></li></ul><h3>Global</h3><ul><li><a href="global.html#standards">standards</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">rmdir.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const fs_1 = tslib_1.__importDefault(require("fs"));
+const path_1 = tslib_1.__importDefault(require("path"));
+const util_1 = tslib_1.__importDefault(require("util"));
+const crypto_1 = tslib_1.__importDefault(require("crypto"));
+const events_1 = require("./events");
+/**
+ * The RmDir class helps you create your own custom unlink method.
+ * Unless you know what you're doing, always end with `.rmDir()`.
+ * Invoke it and chain the methods:
+ * @example
+ * new srm.RmDir()
+    .random()
+    .rmDir()
+ * @class
+ */
+class RmDir {
+    constructor() {
+        this.steps = [];
+        this.compile = (uuid) => {
+            events_1.tree[uuid] = [];
+            return Object.assign((p, options, callback) => {
+                if (callback === undefined &amp;&amp; typeof options === 'function') {
+                    callback = options;
+                    options = undefined;
+                }
+                this.steps.reduce((prev, next) => {
+                    return prev.then((p) => next(p, uuid))
+                        .catch((err) => {
+                        if (err.message !== 'handledPromise') {
+                            events_1.eventError(err, p);
+                            callback(err);
+                        }
+                        return Promise.reject(new Error('handledPromise'));
+                    });
+                }, this.init(p))
+                    .then(() => callback(null))
+                    .catch((err) => {
+                    if (err.message !== 'handledPromise') {
+                        events_1.eventError(err, p);
+                        callback(err);
+                    }
+                });
+            }, { __promisify__: util_1.default.promisify(fs_1.default.rmdir) } // FIXME
+            );
+        };
+    }
+    init(p) {
+        return new Promise((resolve) => {
+            events_1.eventEmitter.emit('start', p);
+            resolve(p);
+        });
+    }
+    /**
+    * Your custom function to apply on the directory.
+    * @param {StepFunction} fun - The number of times the function is executed.
+    * @return {RmDir} The rmDir Class.
+    * @example
+    * new srm.Unlink()
+      .then(function (p) {
+        return new Promise((resolve, reject) => {
+          if (p === '/d/code/')
+            reject(new Error())
+          else
+            resolve(p)
+        })
+      })
+      .unlink()
+    */
+    then(fun) {
+        this.steps.push(fun);
+        return this;
+    }
+    /**
+    * Help to construct the tree of erased directories.
+    * Used in the preview standard.
+    * @return {RmDir} The rmDir Class.
+    */
+    log() {
+        this.steps.push(function (p, uuid) {
+            return new Promise((resolve, reject) => {
+                if (events_1.tree[uuid].includes(p)) {
+                    resolve(p);
+                }
+                else {
+                    events_1.tree[uuid].push(p);
+                    /* const split = p.split(path.sep)
+                    console.log('┃ '.repeat(split.length - 1) + '┠─' + split[split.length - 1]) */
+                    const err = new Error('Log error (or is it?)');
+                    err.code = 'ENOTEMPTY';
+                    reject(err);
+                }
+            });
+        });
+        return this;
+    }
+    /**
+    * Rename the directory to a random string of length 12.
+    * @return {RmDir} The rmDir Class.
+    */
+    rename() {
+        this.steps.push(function (p) {
+            return new Promise((resolve, reject) => {
+                fs_1.default.readdir(p, (err, files) => {
+                    if (err)
+                        reject(err);
+                    if (!files.length) {
+                        // directory appears to be empty
+                        const newName = crypto_1.default.randomBytes(9).toString('base64').replace(/\//g, '0').replace(/\+/g, 'a');
+                        const newPath = path_1.default.join(path_1.default.dirname(p), newName);
+                        events_1.eventEmitter.emit('verbose', p, `Renaming to ${newName} `);
+                        fs_1.default.rename(p, newPath, (err) => {
+                            if (err)
+                                reject(err);
+                            else
+                                resolve(newPath);
+                        });
+                    }
+                    else {
+                        fs_1.default.rmdir(p, (err) => {
+                            reject(err);
+                        });
+                    }
+                });
+            });
+        });
+        return this;
+    }
+    /**
+    * The last function to be executed: remove the directory.
+    * Required, invalid standard if omitted.
+    * @return {fs.rmdir} The compiled rmDir standard.
+    */
+    rmdir() {
+        this.steps.push(function (p) {
+            return new Promise((resolve, reject) => {
+                events_1.eventEmitter.emit('verbose', p, 'Removing');
+                fs_1.default.rmdir(p, (err) => {
+                    if (err)
+                        reject(err);
+                    else {
+                        events_1.eventEmitter.emit('done', p);
+                        resolve(p);
+                    }
+                });
+            });
+        });
+        return this.compile;
+    }
+}
+exports.default = RmDir;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

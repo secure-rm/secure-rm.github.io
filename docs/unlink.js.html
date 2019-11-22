@@ -41,7 +41,7 @@
     
     <input type="text" id="nav-search" placeholder="Search" />
     
-    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/clenemt/docdash" target="_blank" class="menu-item" id="repository" >Github repo</a></h2><h3>Classes</h3><ul><li><a href="Unlink.html">Unlink</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Unlink.html#byte">byte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#byteArray">byteArray</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#complementary">complementary</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#forByte">forByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#log">log</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#ones">ones</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#random">random</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#randomByte">randomByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#then">then</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#truncate">truncate</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#unlink">unlink</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeroes">zeroes</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeros">zeros</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/clenemt/docdash" target="_blank" class="menu-item" id="repository" >Github repo</a></h2><h3>Classes</h3><ul><li><a href="RmDir.html">RmDir</a><ul class='methods'><li data-type='method' style='display: none;'><a href="RmDir.html#log">log</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#rmdir">rmdir</a></li><li data-type='method' style='display: none;'><a href="RmDir.html#then">then</a></li></ul></li><li><a href="Standard.html">Standard</a></li><li><a href="Unlink.html">Unlink</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Unlink.html#byte">byte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#byteArray">byteArray</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#complementary">complementary</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#forByte">forByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#log">log</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#ones">ones</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#random">random</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#randomByte">randomByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#then">then</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#truncate">truncate</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#unlink">unlink</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeroes">zeroes</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeros">zeros</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="eventEmitter.html#event:debug">eventEmitter#debug</a></li></ul><h3>Global</h3><ul><li><a href="global.html#standards">standards</a></li></ul>
 </nav>
 
 <div id="main">
@@ -66,10 +66,14 @@ const crypto_1 = tslib_1.__importDefault(require("crypto"));
 const buffer_1 = require("buffer");
 const events_1 = require("./events");
 /**
- * @classdesc The class to create unlink standards.
- *
- * @exports Unlink
- * @constructor
+ * The Unlink class helps you create your own custom unlink method.
+ * Unless you know what you're doing, always end with `.unlink()`.
+ * Invoke it and chain the methods:
+ * @example
+ * new srm.Unlink()
+    .random()
+    .unlink()
+ * @class
  */
 class Unlink {
     constructor() {
@@ -114,8 +118,28 @@ class Unlink {
         });
     }
     /**
+    * Your custom function to apply on the file.
+    * @param {StepFunction} fun - The number of times the function is executed.
+    * @return {Unlink} The unlink Class.
+    * @example
+    * new srm.Unlink()
+      .then(function (file, fileSize) {
+        return new Promise((resolve, reject) => {
+          if (file === 'test.js')
+            reject(new Error())
+          else
+            resolve({ file, fileSize })
+        })
+      })
+      .unlink()
+    */
+    then(fun) {
+        this.steps.push(fun);
+        return this;
+    }
+    /**
     * Help to construct the tree of erased files.
-    * Used in preview standard.
+    * Used in the preview standard.
     * @return {Unlink} The unlink Class.
     */
     log() {
@@ -130,15 +154,6 @@ class Unlink {
                 resolve({ file, fileSize });
             });
         });
-        return this;
-    }
-    /**
-    * Your custom function to apply on the file.
-    * @param {StepFunction} fun - The number of times the function is executed.
-    * @return {Unlink} The unlink Class.
-    */
-    then(fun) {
-        this.steps.push(fun);
         return this;
     }
     /**
@@ -214,6 +229,10 @@ class Unlink {
     * @param {number} data - A byte: must be between `0x00` and `0xFF` (Hexadecimal)
     * @param {number} [passes = 1] - The number of times the function is executed.
     * @return {Unlink} The unlink Class.
+    * @example
+    * new Unlink()
+      .byte(0x55)
+      .unlink()
     */
     byte(data, passes = 1) {
         this.steps = this.steps.concat(Array(passes).fill(function (file, fileSize) {
@@ -233,6 +252,10 @@ class Unlink {
     * @param {number[]} dataArray - The array containing the bytes.
     * @param {number} [passes = 1] - The number of times the function is executed.
     * @return {Unlink} The unlink Class.
+    * @example
+    * new Unlink()
+      .byteArray([0x92, 0x49, 0x24])
+      .unlink()
     */
     byteArray(dataArray, passes = 1) {
         this.steps = this.steps.concat(Array(passes).fill(function (file, fileSize) {
@@ -252,9 +275,17 @@ class Unlink {
     * A for loop, write the value of the variable at each iteration.
     * @param {Object} forLoop - A destructuring parameter.
       * @param {number} forLoop.init - Initialize the counter variable.
-      * @param {ForLoop.condition} forLoop.condition - An expression to be evaluated before each loop iteration.
-      * @param {ForLoop.increment} forLoop.increment - The increment of the counter variable after each loop iteration.
+      * @param {function} forLoop.condition - An expression to be evaluated before each loop iteration.
+      * @param {function} forLoop.increment - The increment of the counter variable after each loop iteration.
     * @return {Unlink} The unlink Class.
+    * @example
+    * new Unlink()
+      .forByte({
+        init: 0x00,
+        condition: i => i &lt; 0xFF,
+        increment: i => i + 0x11
+      })
+      .unlink()
     */
     forByte({ init, condition, increment }) {
         let i = init;
