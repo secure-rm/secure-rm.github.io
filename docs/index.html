@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Home - Docdash</title>
+    
+    <meta name="description" content="A clean, responsive documentation template theme for JSDoc 3." />
+    
+        <meta name="keywords" content="jsdoc, docdash" />
+        <meta name="keyword" content="jsdoc, docdash" />
+    
+    
+    
+    <meta property="og:title" content="Docdash"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="https://cloud.githubusercontent.com/assets/447956/13398144/4dde7f36-defd-11e5-8909-1a9013302cb9.png"/>
+    <meta property="og:site_name" content="Docdash"/>
+    <meta property="og:url" content="http://clenemt.github.io/docdash/"/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/clenemt/docdash" target="_blank" class="menu-item" id="repository" >Github repo</a></h2><h3>Classes</h3><ul><li><a href="Unlink.html">Unlink</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Unlink.html#byte">byte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#byteArray">byteArray</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#complementary">complementary</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#forByte">forByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#log">log</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#ones">ones</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#random">random</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#randomByte">randomByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#then">then</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#truncate">truncate</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#unlink">unlink</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeroes">zeroes</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeros">zeros</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+    <section class="package">
+        <h3> </h3>		
+    </section>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <section class="readme">
+        <article><h1 align="center">
+  <img src="./assets/secure-rm.png" alt="secure-rm">
+  <br>
+  Completely erases files by making recovery impossible.
+  <br>
+</h1>
+<p align="center">
+  <a href="https://www.npmjs.com/package/secure-rm"><img src="https://img.shields.io/npm/v/secure-rm.svg?style=flat-square" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/secure-rm"><img src="https://img.shields.io/npm/dw/secure-rm.svg?style=flat-square" alt="Downloads/week"></a>
+  <a href="https://github.com/oganexon/secure-rm/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/secure-rm.svg?style=flat-square" alt="License: MIT"></a>
+</p>
+<p align="center">
+  <a href="https://actions-badge.atrox.dev/secure-rm/core/goto?ref=master"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fsecure-rm%2Fcore%2Fbadge%3Fref%3Dmaster&style=flat-square&label=master%20build" alt="Build Status: master"/></a>
+  <a href="https://actions-badge.atrox.dev/secure-rm/core/goto?ref=develop"><img src="https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fsecure-rm%2Fcore%2Fbadge%3Fref%3Ddevelop&style=flat-square&label=dev%20build" alt="Build Status: develop" /></a>
+  <a href="https://coveralls.io/github/secure-rm/core"><img src="https://img.shields.io/coveralls/github/secure-rm/core?style=flat-square" alt="Code coverage"></a>
+</p>
+<h2 id="%E2%9D%93-why">❓ Why</h2>
+<p>When you delete a file using the <code>rm</code> command or <code>fs.unlink</code> in node, it only removes direct pointers to the data disk sectors and make the data recovery possible with common software tools.</p>
+<p>Permanent data erasure goes beyond basic file deletion commands, which:</p>
+<ol>
+<li>Allow for selection of a specific standard, based on unique needs,</li>
+<li>Verify the overwriting method has been successful and removed data across the entire device.</li>
+</ol>
+<h2 id="%F0%9F%93%A6-installation">📦 Installation</h2>
+<p><a href="https://nodejs.org/">Node</a> and <a href="https://www.npmjs.com/">npm</a> required.</p>
+<pre class="prettyprint source lang-shell"><code>npm install secure-rm
+</code></pre>
+<p>Looking for a <strong>command line interface</strong>? <a href="https://www.npmjs.com/package/secure-rm-cli">Click here.</a></p>
+<h2 id="%F0%9F%9A%80-getting-started">🚀 Getting started</h2>
+<p>If you want your application to delete specific files with a pass of cryptographically strong pseudo-random data, use one of these code snippets:</p>
+<h3 id="callback-version">Callback version</h3>
+<pre class="prettyprint source lang-javascript"><code>const srm = require('secure-rm')
+
+srm('./folder/*.js', (err) => {
+  if (err) throw err
+  console.log('Files successfully deleted !')
+})
+</code></pre>
+<h3 id="promise-version">Promise version</h3>
+<pre class="prettyprint source lang-javascript"><code>const srm = require('secure-rm')
+
+srm('./folder/*.js')
+  .then(() => console.log('Files successfully deleted !'))
+  .catch((err) => {throw err})
+</code></pre>
+<h2 id="%F0%9F%93%9A-usage">📚 Usage</h2>
+<p><a href="https://github.com/secure-rm/core/wiki">Visit the wiki</a> to discover all the possibilities secure-rm offers!</p>
+<ul>
+<li>📚 <a href="https://github.com/secure-rm/core/wiki/Standards">Choose a standard</a></li>
+<li>⚙️ <a href="https://github.com/secure-rm/core/wiki/Custom-Standard">Customize your standard</a></li>
+<li>📗 <a href="https://github.com/secure-rm/core/wiki/Unlink-Methods">Unlink Methods</a></li>
+<li>📙 <a href="https://github.com/secure-rm/core/wiki/RmDir-Methods">RmDir Methods</a></li>
+<li>✨ <a href="https://github.com/secure-rm/core/wiki/Events">Respond to events</a></li>
+<li>🚩 <a href="https://github.com/secure-rm/core/wiki/Troubleshooting---Common-issues">Troubleshooting - Common issues</a></li>
+</ul>
+<h3 id="examples%3A">Examples:</h3>
+<pre class="prettyprint source lang-javascript"><code>const options = {
+  standard: 'gutmann',
+  maxBusyTries: 5,
+  disableGlob: true
+}
+
+srm('./data/*.js', options, (err) => {
+  if (err) throw err
+  console.log('Files successfully deleted !')
+})
+
+srm('./trash/dir/', { standard: 'preview' }, (err, fileTree) => {
+  if (err) throw err
+  console.log('Files that would be deleted:' + fileTree)
+})
+
+</code></pre>
+<h2 id="%F0%9F%93%9C-changelog-%2F-history">📜 Changelog / History</h2>
+<p>See the <a href="/CHANGELOG.md">changelog</a> or <a href="https://github.com/oganexon/secure-rm/releases">releases</a>.</p>
+<h2 id="%F0%9F%93%8C-todo">📌 TODO</h2>
+<ul>
+<li>[x] Implement more tests</li>
+<li>[ ] Support of 64bit files</li>
+</ul>
+<h2 id="%F0%9F%8F%97-contributing">🏗 Contributing</h2>
+<p align="center">
+  <a href="https://libraries.io/npm/secure-rm"><img src="https://img.shields.io/librariesio/release/npm/secure-rm?style=flat-square&logo=npm" alt="Dependencies"></a>
+  <img src="https://img.shields.io/github/contributors/secure-rm/core?style=flat-square" alt="Contributors">
+  <img src="https://img.shields.io/github/last-commit/secure-rm/core/develop?style=flat-square" alt="Last commit">
+  <img src="https://img.shields.io/npm/collaborators/secure-rm?style=flat-square" alt="npm collaborators">
+</p>
+<p align="center">
+  <a href="https://jestjs.io"><img src="https://img.shields.io/badge/-jest-99424f?style=flat-square&logo=jest" alt="Tested with Jest"></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/badge/-node-gray?style=flat-square&logo=node.js" alt="Node version"></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/-typescript-blue?style=flat-square&logo=typescript" alt="language"></a>
+</p>
+<p>See <a href="/CONTRIBUTING.md">contributing guidelines</a></p>
+<h3 id="licensing">Licensing</h3>
+<p>This project is under <a href="/LICENSE">MIT License</a>.</p></article>
+    </section>
+
+
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>

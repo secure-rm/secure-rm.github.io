@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>unlink.js - Docdash</title>
+    
+    <meta name="description" content="A clean, responsive documentation template theme for JSDoc 3." />
+    
+        <meta name="keywords" content="jsdoc, docdash" />
+        <meta name="keyword" content="jsdoc, docdash" />
+    
+    
+    
+    <meta property="og:title" content="Docdash"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content="https://cloud.githubusercontent.com/assets/447956/13398144/4dde7f36-defd-11e5-8909-1a9013302cb9.png"/>
+    <meta property="og:site_name" content="Docdash"/>
+    <meta property="og:url" content="http://clenemt.github.io/docdash/"/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/clenemt/docdash" target="_blank" class="menu-item" id="repository" >Github repo</a></h2><h3>Classes</h3><ul><li><a href="Unlink.html">Unlink</a><ul class='methods'><li data-type='method' style='display: none;'><a href="Unlink.html#byte">byte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#byteArray">byteArray</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#complementary">complementary</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#forByte">forByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#log">log</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#ones">ones</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#random">random</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#randomByte">randomByte</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#rename">rename</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#then">then</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#truncate">truncate</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#unlink">unlink</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeroes">zeroes</a></li><li data-type='method' style='display: none;'><a href="Unlink.html#zeros">zeros</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">unlink.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const fs_1 = tslib_1.__importDefault(require("fs"));
+const path_1 = tslib_1.__importDefault(require("path"));
+const util_1 = tslib_1.__importDefault(require("util"));
+const crypto_1 = tslib_1.__importDefault(require("crypto"));
+const buffer_1 = require("buffer");
+const events_1 = require("./events");
+/**
+ * @classdesc The class to create unlink standards.
+ *
+ * @exports Unlink
+ * @constructor
+ */
+class Unlink {
+    constructor() {
+        this.steps = [];
+        this.compile = (uuid) => {
+            events_1.tree[uuid] = [];
+            return Object.assign((file, callback) => {
+                this.steps.reduce((prev, next) => {
+                    return prev.then(({ file, fileSize }) => next(file, fileSize, uuid))
+                        .catch((err) => {
+                        if (err.message !== 'handledPromise') {
+                            events_1.eventError(err, file);
+                            callback(err);
+                        }
+                        return Promise.reject(new Error('handledPromise'));
+                    });
+                }, this.init(file))
+                    .then(() => callback(null))
+                    .catch((err) => {
+                    if (err.message !== 'handledPromise') {
+                        events_1.eventError(err, file);
+                        callback(err);
+                    }
+                });
+            }, { __promisify__: util_1.default.promisify(fs_1.default.unlink) } // FIXME
+            );
+        };
+    }
+    init(file) {
+        return new Promise((resolve, reject) => {
+            fs_1.default.stat(file, (err, stats) => {
+                if (err)
+                    reject(err);
+                else if (stats.size &lt;= buffer_1.kMaxLength) {
+                    events_1.eventEmitter.emit('info', file, 'Starting ');
+                    resolve({ file, fileSize: stats.size });
+                }
+                else {
+                    reject(Error('64bit files are not yet supported.'));
+                }
+            });
+        });
+    }
+    /**
+    * Help to construct the tree of erased files.
+    * Used in preview standard.
+    * @return {Unlink} The unlink Class.
+    */
+    log() {
+        this.steps.push(function (file, fileSize, uuid) {
+            return new Promise((resolve) => {
+                if (!events_1.tree[uuid].includes(file)) {
+                    events_1.tree[uuid].push(file);
+                    events_1.eventEmitter.emit('debug', file, 'Logging ');
+                }
+                // const split = file.split(path.sep)
+                // console.log('┃ '.repeat(split.length - 1) + '┠─' + split[split.length - 1])
+                resolve({ file, fileSize });
+            });
+        });
+        return this;
+    }
+    /**
+    * Your custom function to apply on the file.
+    * @param {StepFunction} fun - The number of times the function is executed.
+    * @return {Unlink} The unlink Class.
+    */
+    then(fun) {
+        this.steps.push(fun);
+        return this;
+    }
+    /**
+    * Write cryptographically strong pseudo-random data.
+    * @param {number} [passes = 1] - The number of times the function is executed.
+    * @return {Unlink} The unlink Class.
+    */
+    random(passes = 1) {
+        this.steps = this.steps.concat(Array(passes).fill(function (file, fileSize) {
+            return new Promise((resolve, reject) => {
+                const buffer = Buffer.alloc(fileSize);
+                crypto_1.default.randomFill(buffer, (err, randomBuffer) => {
+                    if (err)
+                        reject(err);
+                    events_1.eventEmitter.emit('debug', file, 'Writing random data ');
+                    fs_1.default.writeFile(file, randomBuffer, (err) => {
+                        if (err)
+                            reject(err);
+                        resolve({ file, fileSize });
+                    });
+                });
+            });
+        }));
+        return this;
+    }
+    /**
+    * Write zeros on the whole file.
+    * @param {number} [passes = 1] - The number of times the function is executed.
+    * @return {Unlink} The unlink Class.
+    */
+    zeros(passes = 1) {
+        this.steps = this.steps.concat(Array(passes).fill(function (file, fileSize) {
+            return new Promise((resolve, reject) => {
+                events_1.eventEmitter.emit('debug', file, 'Writing zeroes ');
+                fs_1.default.writeFile(file, Buffer.alloc(fileSize, 0b00000000), (err) => {
+                    if (err)
+                        reject(err);
+                    resolve({ file, fileSize });
+                });
+            });
+        }));
+        return this;
+    }
+    /**
+    * Write ones on the whole file.
+    * @param {number} [passes = 1] - The number of times the function is executed.
+    * @return {Unlink} The unlink Class.
+    * @deprecated
+    */
+    zeroes(passes = 1) {
+        return this.zeros(passes);
+    }
+    /**
+    * Write ones on the whole file.
+    * @param {number} [passes = 1] - The number of times the function is executed.
+    * @return {Unlink} The unlink Class.
+    */
+    ones(passes = 1) {
+        this.steps = this.steps.concat(Array(passes).fill(function (file, fileSize) {
+            return new Promise((resolve, reject) => {
+                events_1.eventEmitter.emit('debug', file, 'Writing ones ');
+                fs_1.default.writeFile(file, Buffer.alloc(fileSize, 0b11111111), (err) => {
+                    if (err)
+                        reject(err);
+                    resolve({ file, fileSize });
+                });
+            });
+        }));
+        return this;
+    }
+    /**
+    * Write one byte on the whole file.
+    * @param {number} data - A byte: must be between `0x00` and `0xFF` (Hexadecimal)
+    * @param {number} [passes = 1] - The number of times the function is executed.
+    * @return {Unlink} The unlink Class.
+    */
+    byte(data, passes = 1) {
+        this.steps = this.steps.concat(Array(passes).fill(function (file, fileSize) {
+            return new Promise((resolve, reject) => {
+                events_1.eventEmitter.emit('debug', file, `Writing 0x${data.toString(16)} `);
+                fs_1.default.writeFile(file, Buffer.alloc(fileSize, data), (err) => {
+                    if (err)
+                        reject(err);
+                    resolve({ file, fileSize });
+                });
+            });
+        }));
+        return this;
+    }
+    /**
+    * Write an array of bytes on the whole file.
+    * @param {number[]} dataArray - The array containing the bytes.
+    * @param {number} [passes = 1] - The number of times the function is executed.
+    * @return {Unlink} The unlink Class.
+    */
+    byteArray(dataArray, passes = 1) {
+        this.steps = this.steps.concat(Array(passes).fill(function (file, fileSize) {
+            return new Promise((resolve, reject) => {
+                events_1.eventEmitter.emit('debug', file, `Writing ${dataArray.map(x => '0x' + x.toString(16))} `);
+                const dataConverted = Buffer.from(dataArray);
+                fs_1.default.writeFile(file, Buffer.alloc(fileSize, dataConverted), (err) => {
+                    if (err)
+                        reject(err);
+                    resolve({ file, fileSize });
+                });
+            });
+        }));
+        return this;
+    }
+    /**
+    * A for loop, write the value of the variable at each iteration.
+    * @param {Object} forLoop - A destructuring parameter.
+      * @param {number} forLoop.init - Initialize the counter variable.
+      * @param {ForLoop.condition} forLoop.condition - An expression to be evaluated before each loop iteration.
+      * @param {ForLoop.increment} forLoop.increment - The increment of the counter variable after each loop iteration.
+    * @return {Unlink} The unlink Class.
+    */
+    forByte({ init, condition, increment }) {
+        let i = init;
+        while (true) {
+            if (!condition(i)) {
+                break;
+            }
+            const j = i; // Sets the value (the following function could be called after the increment)
+            this.steps.push(function (file, fileSize) {
+                return new Promise((resolve, reject) => {
+                    events_1.eventEmitter.emit('debug', file, `Writing 0x${j.toString(16)} `);
+                    fs_1.default.writeFile(file, Buffer.alloc(fileSize, j), (err) => {
+                        if (err)
+                            reject(err);
+                        resolve({ file, fileSize });
+                    });
+                });
+            });
+            i = increment(i);
+        }
+        return this;
+    }
+    /**
+    * Write one cryptographically strong pseudo-random byte on the whole file.
+    * @param {number} [passes = 1] - The number of times the function is executed.
+    * @return {Unlink} The unlink Class.
+    */
+    randomByte(passes = 1) {
+        this.steps = this.steps.concat(Array(passes).fill(function (file, fileSize) {
+            return new Promise((resolve, reject) => {
+                events_1.eventEmitter.emit('debug', file, 'Writing random byte ');
+                fs_1.default.writeFile(file, Buffer.alloc(fileSize, crypto_1.default.randomBytes(1)[0]), (err) => {
+                    if (err)
+                        reject(err);
+                    resolve({ file, fileSize });
+                });
+            });
+        }));
+        return this;
+    }
+    /**
+     * Write the binary complement of the file.
+     * @return {Unlink} The unlink Class.
+     */
+    complementary() {
+        this.steps.push(function (file, fileSize) {
+            return new Promise((resolve, reject) => {
+                events_1.eventEmitter.emit('debug', file, 'Reading file ');
+                fs_1.default.readFile(file, (err, data) => {
+                    if (err)
+                        reject(err);
+                    else {
+                        events_1.eventEmitter.emit('debug', file, 'Getting binary complement ');
+                        for (let i = 0, l = fileSize; i &lt; l; i++) {
+                            data[i] = ~data[i];
+                        }
+                        events_1.eventEmitter.emit('debug', file, 'Writing binary complement ');
+                        fs_1.default.writeFile(file, data, (err) => {
+                            if (err)
+                                reject(err);
+                            else
+                                resolve({ file, fileSize });
+                        });
+                    }
+                });
+            });
+        });
+        return this;
+    }
+    /**
+     * Rename the file to a random string of length 12.
+     * @return {Unlink} The unlink Class.
+     */
+    rename() {
+        this.steps.push(function (file, fileSize) {
+            return new Promise((resolve, reject) => {
+                const newName = crypto_1.default.randomBytes(9).toString('base64').replace(/\//g, '0').replace(/\+/g, 'a');
+                const newPath = path_1.default.join(path_1.default.dirname(file), newName);
+                events_1.eventEmitter.emit('debug', file, `Renaming to ${newName} `);
+                fs_1.default.rename(file, newPath, (err) => {
+                    if (err)
+                        reject(err);
+                    else
+                        resolve({ file: newPath, fileSize });
+                });
+            });
+        });
+        return this;
+    }
+    /**
+     * Truncate to between 25% and 75% of the file size.
+     * @return {Unlink} The unlink Class.
+     */
+    truncate() {
+        this.steps.push(function (file, fileSize) {
+            return new Promise((resolve, reject) => {
+                events_1.eventEmitter.emit('debug', file, 'Truncating ');
+                const newSize = Math.floor((Math.random() * 0.5 + 0.25) * fileSize);
+                fs_1.default.truncate(file, newSize, (err) => {
+                    if (err)
+                        reject(err);
+                    else
+                        resolve({ file, fileSize: newSize });
+                });
+            });
+        });
+        return this;
+    }
+    /**
+     * The last function to be executed: unlink the file pointer.
+     * Required, invalid standard if omitted.
+     * @return {fs.unlink} The compiled unlink standard.
+     */
+    unlink() {
+        this.steps.push(function (file, fileSize) {
+            return new Promise((resolve, reject) => {
+                events_1.eventEmitter.emit('debug', file, 'Unlinking ');
+                fs_1.default.unlink(file, (err) => {
+                    if (err)
+                        reject(err);
+                    else {
+                        events_1.eventEmitter.emit('info', file, 'Done ');
+                        resolve({ file, fileSize });
+                    }
+                });
+            });
+        });
+        return this.compile;
+    }
+}
+exports.default = Unlink;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+<script src="scripts/collapse.js" defer></script>
+
+
+</body>
+</html>
